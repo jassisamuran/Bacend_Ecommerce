@@ -87,6 +87,35 @@ app.post("/api/seller/create-catalog", async (req, res) => {
   }
 });
 
+app.post("/api/buyer/create-order/:buyer_id/:seller_id", async (req, res) => {
+  try {
+    const { buyer_id, seller_id } = req.params;
+    const { products } = req.body;
+
+    // Find the buyer based on the provided buyer_id
+    const buyer = await User.findById(buyer_id);
+
+    if (!buyer || buyer.userType !== "buyer") {
+      return res.status(404).json({ error: "Buyer not found" });
+    }
+
+    // Find the seller based on the provided seller_id
+    const seller = await User.findById(seller_id);
+
+    if (!seller || seller.userType !== "seller") {
+      return res.status(404).json({ error: "Seller not found" });
+    }
+
+    const order = new Order({ buyer, seller, products });
+    await order.save();
+
+    res.json({ message: "Order created successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error creating order" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
