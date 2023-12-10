@@ -55,6 +55,38 @@ app.get("/api/buyer/seller-catalog/:seller_id", async (req, res) => {
     res.status(500).json({ error: "Error fetching seller catalog" });
   }
 });
+
+app.post("/api/seller/create-catalog", async (req, res) => {
+  try {
+    const { products, sellerId } = req.body;
+
+    // Find the seller based on the provided sellerId
+    const seller = await User.findOne({ _id: sellerId, userType: "seller" });
+
+    if (!seller) {
+      return res.status(404).json({ error: "Seller not found" });
+    }
+
+    // Check if a catalog already exists for the seller
+    let catalog = await Catalog.findOne({ seller });
+
+    if (!catalog) {
+      // If the catalog doesn't exist, create a new one
+      catalog = new Catalog({ seller, products });
+    } else {
+      // If the catalog already exists, update the products
+      catalog.products = products;
+    }
+
+    await catalog.save();
+
+    res.json({ message: "Catalog created/updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error creating/updating catalog" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
