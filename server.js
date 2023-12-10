@@ -36,7 +36,25 @@ app.post("/api/auth/login", async (req, res) => {
     res.status(500).json({ error: "Error logging in" });
   }
 });
+app.get("/api/buyer/list-of-sellers", async (req, res) => {
+  try {
+    const sellers = await User.find({ userType: "seller" }, "username");
+    res.json({ sellers });
+  } catch (error) {
+    console.log("Error list-of-sellers", error);
+    res.status(500).json({ error: "Error fetching sellers" });
+  }
+});
 
+app.get("/api/buyer/seller-catalog/:seller_id", async (req, res) => {
+  try {
+    const { seller_id } = req.params;
+    const catalog = await Catalog.findOne({ seller: seller_id }, "products");
+    res.json({ catalog });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching seller catalog" });
+  }
+});
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
