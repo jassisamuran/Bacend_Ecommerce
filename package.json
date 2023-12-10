@@ -1,0 +1,25 @@
+{
+  "name": "bacend_assignment_1-3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jassisamuran/Bacend_Ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jassisamuran/Bacend_Ecommerce/issues"
+  },
+  "homepage": "https://github.com/jassisamuran/Bacend_Ecommerce#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0"
+  }
+}
