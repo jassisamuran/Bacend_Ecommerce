@@ -10,15 +10,27 @@ const { User, Catalog, Order } = require("./schema/userSchema");
 app.post("/api/auth/register", async (req, res) => {
   try {
     const { username, password, userType } = req.body;
-    const user = new User({ username, password, userType });
 
-    await user.save();
+    // Check if the username is already taken
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      // If username is taken, return an error response
+      return res.status(400).json({ error: "Username is already taken" });
+    }
+
+    // If username is not taken, proceed to create a new user
+    const newUser = new User({ username, password, userType });
+
+    await newUser.save();
     res.json({ message: "User registered successfully" });
   } catch (error) {
+    // Handle other errors, like database connection issues, etc.
+    console.error("Error registering user:", error);
     res.status(500).json({ error: "Error registering user" });
-    console.log("Error is ", error);
   }
 });
+
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { username, password } = req.body;
