@@ -116,6 +116,26 @@ app.post("/api/buyer/create-order/:buyer_id/:seller_id", async (req, res) => {
   }
 });
 
+app.get("/api/seller/orders", async (req, res) => {
+  try {
+    // Assuming you have some way to identify the user making the request, for example, through authentication
+    const userId = req.body;
+
+    // Find the user and check if they are a seller
+    const user = await User.findOne({ _id: userId });
+    if (!user || user.userType !== "seller") {
+      return res.status(403).json({ error: "User is not a seller" });
+    }
+
+    // Fetch orders for the seller (user)
+    const orders = await Order.find({ seller: userId });
+    res.json({ orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error fetching seller orders" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
