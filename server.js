@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 app.use(bodyParser.json());
+const jwt = require("jsonwebtoken");
 const db = require("./database");
 const { User, Catalog, Order } = require("./schema/userSchema");
 
@@ -25,13 +26,13 @@ app.post("/api/auth/login", async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-    //  const token = jwt.sign(
-    //    { userId: user._id, username: user.username },
-    //    "123456",
-    //    { expiresIn: "24h" }
-    //  );
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      "123456",
+      { expiresIn: "24h" }
+    );
 
-    res.json({ token: "your_token" });
+    res.json({ token: token });
   } catch (error) {
     res.status(500).json({ error: "Error logging in" });
   }
@@ -118,8 +119,7 @@ app.post("/api/buyer/create-order/:buyer_id/:seller_id", async (req, res) => {
 
 app.get("/api/seller/orders", async (req, res) => {
   try {
-    // Assuming you have some way to identify the user making the request, for example, through authentication
-    const userId = req.body;
+    const { userId } = req.body;
 
     // Find the user and check if they are a seller
     const user = await User.findOne({ _id: userId });
